@@ -1,0 +1,35 @@
+pipeline {
+	agent any 
+	
+	stages {
+		stage ('Copying Repository') 
+		{
+			steps {
+				echo '************************************************'
+				echo 'Copying Files to Jenkins Server'
+				sh label: '', script: 'rm -rf sparkjava-war-example '
+				sh label: '', script: 'git clone https://github.com/kliakos/sparkjava-war-example.git'
+				echo '************************************************'
+			}
+		}
+		stage ('Maven Build') 
+		{
+			steps
+			{
+				echo '************************************************'
+				echo 'Running a Maven Build'
+				sh label: '', script: 'cd  sparkjava-war-example && mvn package'
+			    echo '************************************************'
+			}
+		}
+		stage ('Transfer War Files') {
+			steps{
+				echo '************************************************'
+				echo 'Transferring War Files to AppServer'
+				build 'warfiletransfer2'
+				echo '************************************************'
+			}
+		}
+		
+	}
+}
